@@ -1,0 +1,45 @@
+{
+  "name": "graph-garden",
+  "version": "1.0.0",
+  "description": "A graph sandbox.",
+  "main": "index.js",
+  "license": "MIT",
+  "author": {
+    "name": "Tomasz Dysinski",
+    "email": "oz@bunnybones.com",
+    "url": "https://github.com/bunnybones1"
+  },
+  "dependencies": {
+    "cannon": "^0.6.2",
+    "clamp": "^1.0.1",
+    "delaunay-triangulate": "^1.1.6",
+    "esprima": "^2.4.1",
+    "game-keyboard": "^0.1.0",
+    "input-unified-pointers": "^2.2.1",
+    "three": "^0.71.0",
+    "threejs-camera-controller-first-person-desktop": "^5.0.1",
+    "threejs-gui-crosshair": "^1.0.0",
+    "threejs-managed-view": "^4.0.3",
+    "threejs-texture-checkerboard": "^1.0.0",
+    "urlparam": "^1.0.1"
+  },
+  "devDependencies": {
+    "beefy": "^2.1.5",
+    "watchify": "^3.2.3"
+  },
+  "scripts": {
+    "test": "beefy test.js --live --open"
+  },
+  "keywords": [
+    "graph",
+    "editor"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bunnybones1/graph-garden.git"
+  },
+  "homepage": "https://github.com/bunnybones1/graph-garden",
+  "bugs": {
+    "url": "https://github.com/bunnybones1/graph-garden/issues"
+  }
+}
