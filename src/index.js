@@ -24,6 +24,7 @@ function GraphGarden() {
 	this.esprimaManager.onTreeSignal.add(this.treeBuilder.buildTree);
 	this.treeBuilder.onNodeSignal.add(this.treeVisualizer.addNode);
 	this.treeBuilder.onCompleteSignal.add(function() {
+		_this.treeVisualizer.merge();
 		var meshes = _this.treeVisualizer.rootMeshes;
 		var scene = _this.viewManager.scene;
 		console.warn('attempts', _this.treeVisualizer.attempts);
@@ -31,7 +32,7 @@ function GraphGarden() {
 		console.warn('orphans', _this.treeVisualizer.orphans);
 		for (var i = meshes.length - 1; i >= 0; i--) {
 			scene.add(meshes[i]);
-			meshes[i].scale.multiplyScalar(4);
+			meshes[i].scale.multiplyScalar(0.25);
 			meshes[i].rotation.x = Math.PI * 0.5;
 		}
 	});

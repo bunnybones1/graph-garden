@@ -15,12 +15,15 @@ var options = {
 };
 
 function EsprimaManager() {
-	var file = urlParam('file', 'test.js');
+
+	var file = urlParam('file', null);
 	var port = urlParam('port', 9966);
 	var jsPath;
 	var onTreeSignal = new Signal();
 
-	if(file.indexOf('http:') !== -1) {
+	if(!file) {
+		window.location += '?file=https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.4/TweenMax.min.js';
+	} else if(file.indexOf('http') === -1) {
 		var addressParts = window.location.href.split('/');
 		addressParts[2] = addressParts[2].split(':');
 

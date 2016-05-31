@@ -28,7 +28,8 @@
     "watchify": "^3.2.3"
   },
   "scripts": {
-    "test": "beefy test.js --live --open"
+    "test": "beefy test.js --index=dev.html --open",
+    "build": "browserify test.js > dist/bundle.js && uglifyjs dist/bundle.js -m -c -o dist/bundle.min.js"
   },
   "keywords": [
     "graph",

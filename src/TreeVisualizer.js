@@ -97,6 +97,117 @@ TreeVisualizer.prototype.addNode = function(node, parentNode){
 	}
 };
 
+TreeVisualizer.prototype.merge = function() {
+	var materials = [];
+	var childrenPerMaterials = [];
+	this.rootMeshes.forEach(function(root) {
+		root.traverse(function(child) {
+			child.updateMatrix();
+			child.updateMatrixWorld();
+			if(!child.material) return;
+			var index = materials.indexOf(child.material);
+			if(index === -1) {
+				index = materials.length;
+				materials.push(child.material);
+				childrenPerMaterials.push([]);
+			}
+			childrenPerMaterials[index].push(child);
+		});
+	});
+	// debugger;
+
+	var mergedMeshes = [];
+	var chunkLimit = Math.pow(2, 16);
+	var nextChunkSize;
+	var meshesInNextChunk = [];
+	var accumulatedPositionSize;
+	var accumulatedFaceSize;
+	childrenPerMaterials.forEach(function(meshGroup, index){
+		function resetGeometry() {
+			nextChunkSize = 0;
+			meshesInNextChunk.length = 0;
+			accumulatedPositionSize = 0;
+			accumulatedFaceSize = 0;
+
+		}
+		function finalizeGeometry() {
+			if(meshesInNextChunk.length === 0) return;
+			var geometry = new THREE.BufferGeometry();
+			var indicesBufferArray = new Uint16Array(accumulatedFaceSize * 3);
+			var positionBufferArray = new Float32Array(accumulatedPositionSize * 3);
+			var normalBufferArray = new Float32Array(accumulatedPositionSize * 3);
+			var bufferPositionCursor = 0;
+			var bufferFaceCursor = 0;
+			var faceOffset = 0;
+			var tempVert = new THREE.Vector3();
+			meshesInNextChunk.forEach(function(subMesh) {
+				var normals = new Array(subMesh.geometry.vertices.length);
+				for (var i = subMesh.geometry.vertices.length - 1; i >= 0; i--) {
+					normals[i] = [];
+				}
+				subMesh.geometry.faces.forEach(function(face) {
+					normals[face.a].push(face.vertexNormals[0]);
+					normals[face.b].push(face.vertexNormals[1]);
+					normals[face.c].push(face.vertexNormals[2]);
+				});
+
+				normals = normals.map(function(many) {
+					if(many.length === 0) {
+						throw new Error('How can there be zero normals for this index?');
+					}
+					var one = new THREE.Vector3();
+					for (var i = 0; i < many.length; i++) {
+						one.add(many[i]);
+					}
+					one.multiplyScalar(1 / many.length);
+					return one;
+				});
+				var morphVertices = subMesh.geometry.morphTargets[0].vertices;
+				subMesh.geometry.vertices.forEach(function(vert, vertIndex) {
+					tempVert.copy(vert);
+					tempVert.lerp(morphVertices[vertIndex], subMesh.morphTargetInfluences[0]);
+					tempVert.applyMatrix4(subMesh.matrixWorld);
+					tempVert.toArray(positionBufferArray, bufferPositionCursor);
+
+					tempVert.copy(normals[vertIndex]);
+					tempVert.transformDirection(subMesh.matrixWorld);
+					tempVert.toArray(normalBufferArray, bufferPositionCursor);
+
+					bufferPositionCursor += 3;
+				});
+
+				subMesh.geometry.faces.forEach(function(face) {
+					indicesBufferArray[bufferFaceCursor] = face.a + faceOffset;
+					indicesBufferArray[bufferFaceCursor+1] = face.b + faceOffset;
+					indicesBufferArray[bufferFaceCursor+2] = face.c + faceOffset;
+					bufferFaceCursor += 3;
+				});
+
+				faceOffset += subMesh.geometry.vertices.length;
+			});
+			geometry.addAttribute('position', new THREE.BufferAttribute(positionBufferArray, 3));
+			geometry.addAttribute('normal', new THREE.BufferAttribute(normalBufferArray, 3));
+			geometry.addAttribute('index', new THREE.BufferAttribute(indicesBufferArray, 1));
+			mergedMeshes.push(new THREE.Mesh(geometry, materials[index]));
+			resetGeometry();
+		}
+		resetGeometry();
+		while(meshGroup.length > 0) {
+			var nextMesh = meshGroup.shift();
+			var meshPostionSize = nextMesh.geometry.vertices.length;
+			if(accumulatedPositionSize + meshPostionSize > chunkLimit) {
+				finalizeGeometry();
+			} else {
+				accumulatedPositionSize += meshPostionSize;
+				accumulatedFaceSize += nextMesh.geometry.faces.length;
+			}
+			meshesInNextChunk.push(nextMesh);
+		}
+		finalizeGeometry();
+	});
+	this.rootMeshes = mergedMeshes;
+};
+
 TreeVisualizer.prototype.test = function(total){
 	var rootObj = new THREE.Object3D();
 	for (var i = 0; i < total; i++) {

@@ -132,7 +132,7 @@ function WorldManager(app) {
 
 
 
-	var cylinderShape = new CANNON.Cylinder(0.05, 0.6, 1.5, 16);
+	var cylinderShape = new CANNON.Cylinder(0.05, 0.06, 0.15, 16);
 	// cylinderShape.material = groundMaterial;
 
 	var playerBody = new CANNON.Body({
@@ -146,10 +146,10 @@ function WorldManager(app) {
 		 collisionFilterGroup: COLL_PLAYER,
 		 collisionFilterMask: COLL_ENVIRONMENT | COLL_ITEMS
 	});
-	var feetShape = new CANNON.Sphere(1.0);
-	playerBody.addShape(feetShape, new CANNON.Vec3(0, 0, 0.75));
+	var feetShape = new CANNON.Sphere(0.1);
+	playerBody.addShape(feetShape, new CANNON.Vec3(0, 0, 0));
 	playerBody.quaternion.setFromEuler(Math.PI * 0.5, 0, 0);
-	playerBody.position.set(0, 3, 3);
+	playerBody.position.set(0, 6, 6);
 	var playerMesh = new THREE.Object3D();
 	// var playerMesh = new THREE.Mesh(
 	// 	new THREE.CylinderGeometry(0.05, 0.6, 1.5, 16),
@@ -206,7 +206,7 @@ function WorldManager(app) {
 		});
 	}
 
-	for (var i = 0; i < urlParam('ballsTotal', 15); i++) {
+	for (var i = 0; i < urlParam('ballsTotal', 0); i++) {
 		makeBall(
 			Math.random()*20-10,
 			Math.random()*20-10,
