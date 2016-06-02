@@ -48,7 +48,7 @@ TreeBuilder.prototype.buildTree = function(estree){
 	}
 
 	// try {
-		var iters = 100;
+		var iters = 150;
 		while(branchesToProcess.length > 0 && iters > 0) {
 			var temp = branchesToProcess.slice();
 			branchesToProcess.length = 0;
