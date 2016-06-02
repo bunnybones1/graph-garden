@@ -9,6 +9,10 @@ function __getGeometry() {
 }
 var __types = [];
 var __materials = [];
+
+function hashCode(s){
+  return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);              
+}
 function __getMaterial(type) {
 	if(__types.indexOf(type) === -1) {
 		__types.push(type);
@@ -16,7 +20,8 @@ function __getMaterial(type) {
 	var depth = __types.indexOf(type);
 	if(!__materials[depth]) {
 		var color = new THREE.Color();
-		color.setHSL((depth/24)%1, 1, 0.75);
+		// color.setHSL((depth/24)%1, 1, 0.75);
+		color.setHSL((hashCode(type)/24)%1, 1, ((hashCode(type)/47)%1) * 0.4 + 0.45);
 		__materials[depth] = new THREE.MeshPhongMaterial({
 			// wireframe: true,
 			morphTargets: true,
