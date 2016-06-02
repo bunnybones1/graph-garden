@@ -41,9 +41,14 @@ function TreeVisualizer(app) {
 	this.addNode = this.addNode.bind(this);
 }
 
-var temp = 0;
+var nextThresh = 10000;
 TreeVisualizer.prototype.addNode = function(node, parentNode){
 	this.attempts++;
+	if(this.attempts > nextThresh) {
+		nextThresh *= 1.25;
+		window.document.title = ('nodes: ' + this.attempts + '...');
+		console.log('attempted', this.attempts, 'still working...');
+	}
 	if(this.registered.indexOf(node) !== -1) {
 		this.multiParented++;
 		return;
@@ -59,7 +64,6 @@ TreeVisualizer.prototype.addNode = function(node, parentNode){
 		depth = 0;
 	}
 	var mesh = new THREE.Mesh(__getGeometry(), __getMaterial(node.type));
-	mesh.id2 = temp++;
 	mesh.morphTargetInfluences[0] = 0;
 	var attachPoint = new THREE.Object3D();
 	attachPoint.position.y = 1;
@@ -83,13 +87,9 @@ TreeVisualizer.prototype.addNode = function(node, parentNode){
 		var scaleAdjust = Math.sqrt(siblings.length) / 5 * 20;
 		siblings.forEach(function(child, i) {
 			child.scale.y = scaleAdjust * 0.8;
-			if(child.id2 <= 10) {
-				console.log(child.id2, child.scale.y, 1/scaleAdjust);
-			}
 			child.attachPoint.scale.y = 1/scaleAdjust;
 			child.morphTargetInfluences[0] = 1 - 1 / scaleAdjust;
 		});
-
 	} else {
 		this.rootMeshes.push(mesh);
 		mesh.depth = 0;
@@ -100,11 +100,14 @@ TreeVisualizer.prototype.addNode = function(node, parentNode){
 TreeVisualizer.prototype.merge = function() {
 	var materials = [];
 	var childrenPerMaterials = [];
+	var nodes = 0;
+	var merged = 0;
 	this.rootMeshes.forEach(function(root) {
 		root.traverse(function(child) {
 			child.updateMatrix();
 			child.updateMatrixWorld();
 			if(!child.material) return;
+			nodes++;
 			var index = materials.indexOf(child.material);
 			if(index === -1) {
 				index = materials.length;
@@ -115,7 +118,7 @@ TreeVisualizer.prototype.merge = function() {
 		});
 	});
 	// debugger;
-
+	window.document.title = 'merging ' + nodes + ' nodes';
 	var mergedMeshes = [];
 	var chunkLimit = Math.pow(2, 16);
 	var nextChunkSize;
@@ -194,6 +197,8 @@ TreeVisualizer.prototype.merge = function() {
 		resetGeometry();
 		while(meshGroup.length > 0) {
 			var nextMesh = meshGroup.shift();
+			merged++;
+			window.document.title = 'merging ' + (merged / nodes * 100).toFixed(1) + '%';
 			var meshPostionSize = nextMesh.geometry.vertices.length;
 			if(accumulatedPositionSize + meshPostionSize > chunkLimit) {
 				finalizeGeometry();

@@ -24,7 +24,9 @@ function GraphGarden() {
 	this.esprimaManager.onTreeSignal.add(this.treeBuilder.buildTree);
 	this.treeBuilder.onNodeSignal.add(this.treeVisualizer.addNode);
 	this.treeBuilder.onCompleteSignal.add(function() {
+		window.document.title = 'nodes: ' + _this.treeVisualizer.attempts + ' merging.';
 		_this.treeVisualizer.merge();
+		window.document.title = 'Graph Garden';
 		var meshes = _this.treeVisualizer.rootMeshes;
 		var scene = _this.viewManager.scene;
 		console.warn('attempts', _this.treeVisualizer.attempts);
