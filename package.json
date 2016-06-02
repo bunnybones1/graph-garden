@@ -13,6 +13,7 @@
     "cannon": "^0.6.2",
     "clamp": "^1.0.1",
     "delaunay-triangulate": "^1.1.6",
+    "escodegen": "^1.8.0",
     "esprima": "^2.4.1",
     "game-keyboard": "^0.1.0",
     "input-unified-pointers": "^2.2.1",

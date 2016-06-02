@@ -5,6 +5,7 @@ var WorldManager = require('./WorldManager');
 var EsprimaManager = require('./EsprimaManager');
 var TreeBuilder = require('./TreeBuilder');
 var TreeVisualizer = require('./TreeVisualizer');
+var CodePreviewer = require('./CodePreviewer');
 
 
 function GraphGarden() {
