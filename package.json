@@ -17,7 +17,7 @@
     "esprima": "^2.4.1",
     "game-keyboard": "^0.1.0",
     "input-unified-pointers": "^2.2.1",
-    "three": "^0.71.0",
+    "three": "^0.94.0",
     "threejs-camera-controller-first-person-desktop": "^5.0.1",
     "threejs-gui-crosshair": "^1.0.0",
     "threejs-managed-view": "^4.0.3",
@@ -25,11 +25,10 @@
     "urlparam": "^1.0.1"
   },
   "devDependencies": {
-    "beefy": "^2.1.5",
-    "watchify": "^3.2.3"
+    "xhr": "^2.5.0"
   },
   "scripts": {
-    "test": "beefy test.js --index=dev.html --open",
+    "test": "budo test.js --index=dev.html --open",
     "build": "browserify test.js > dist/bundle.js && uglifyjs dist/bundle.js -m -c -o dist/bundle.min.js"
   },
   "keywords": [

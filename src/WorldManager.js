@@ -96,7 +96,7 @@ function WorldManager(app) {
 	scene.add(plane);
 
 	var world = new CANNON.World();
-	world.gravity.set(0, 0, 10);
+	world.gravity.set(0, 0, 0);
 	world.gravity.w = 0.4;
 	world.broadphase = new CANNON.NaiveBroadphase();
 	world.solver.iterations = 10;
@@ -240,7 +240,7 @@ function WorldManager(app) {
 			rayTo.z -= 2;
 			world.raycastClosest(rayFrom, rayTo, raycastOptions, result);
 			if(result.body === groundBody && result.distance < 1) {
-				// playerBody.velocity.z += 10;
+				playerBody.velocity.z += 10;
 			}
 		}
 		objects.forEach(function(object) {
